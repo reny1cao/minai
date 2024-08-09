@@ -23,7 +23,8 @@ const modules = [
   'main/remoteActions.js',
   'main/keychainService.js',
   'js/util/proxy.js',
-  'main/themeMain.js'
+  'main/themeMain.js',
+  'main/aiAssistant.js'  // Add this line
 ]
 
 function buildMain () {

@@ -10,6 +10,7 @@ var focusMode = require('focusMode.js')
 var tabBar = require('navbar/tabBar.js')
 var tabEditor = require('navbar/tabEditor.js')
 var searchbar = require('searchbar/searchbar.js')
+var aiAssistant = require('aiAssistant/aiAssistant.js')
 
 /* creates a new task */
 
@@ -272,6 +273,34 @@ tabBar.events.on('tab-selected', function (id) {
 
 tabBar.events.on('tab-closed', function (id) {
   closeTab(id)
+})
+
+// Initialize the AI Assistant
+aiAssistant.initialize()
+
+// Add event listener for tab switching to update AI Assistant button state
+tabBar.events.on('tab-selected', function (id) {
+  switchToTab(id)
+  aiAssistant.update()
+})
+
+// Add event listener for tab updates to update AI Assistant button state
+webviews.bindIPC('did-navigate', function (tabId, url) {
+  if (tabId === tabs.getSelected()) {
+    aiAssistant.update()
+  }
+})
+
+// Add event listener for new tabs to update AI Assistant button state
+tabBar.events.on('tab-created', function (id) {
+  if (id === tabs.getSelected()) {
+    aiAssistant.update()
+  }
+})
+
+// Add event listener for opening AI Assistant from menu
+ipc.on('openAIAssistant', function () {
+  aiAssistant.onClick()
 })
 
 module.exports = {

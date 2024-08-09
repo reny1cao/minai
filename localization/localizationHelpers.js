@@ -68,12 +68,16 @@ if (typeof document !== 'undefined') {
     }
   })
   document.querySelectorAll('[data-label]').forEach(function (el) {
-    var str = l(el.getAttribute('data-label'))
+    var labelKey = el.getAttribute('data-label')
+    var str = l(labelKey)
     if (typeof str === 'string') {
       el.setAttribute('title', str)
       el.setAttribute('aria-label', str)
     } else {
-      throw new Error('invalid data-label value: ' + str)
+      console.warn('Missing translation for data-label: ' + labelKey)
+      // Fallback to using the key itself
+      el.setAttribute('title', labelKey)
+      el.setAttribute('aria-label', labelKey)
     }
   })
   document.querySelectorAll('[data-value]').forEach(function (el) {

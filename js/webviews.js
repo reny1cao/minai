@@ -363,6 +363,46 @@ const webviews = {
   },
   getNavigationHistory: function (id) {
     return ipc.invoke('getNavigationHistory', id)
+  },
+  getPageContent: function (tabId) {
+    return new Promise(function (resolve, reject) {
+      if (!webviews.hasViewForTab(tabId)) {
+        reject(new Error('No view found for tab'));
+        return;
+      }
+
+      webviews.callAsync(tabId, 'executeJavaScript', `
+        (function() {
+          var content = {
+            title: document.title,
+            url: window.location.href,
+            text: document.body.innerText
+          };
+          return content;
+        })()
+      `, function (err, result) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  },
+  getSelection: function (tabId) {
+    return new Promise(function (resolve, reject) {
+      webviews.callAsync(tabId, 'executeJavaScript', `
+        (function() {
+          return window.getSelection().toString();
+        })()
+      `, function (err, result) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
   }
 }
 
